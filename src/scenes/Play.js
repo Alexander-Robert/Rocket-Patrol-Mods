@@ -62,7 +62,7 @@ class Play extends Phaser.Scene {
             frameRate: 30
         });
 
-        //initialize score
+        //initialize scores
         this.p1Score = 0;
 
         //display score
@@ -90,8 +90,15 @@ class Play extends Phaser.Scene {
             this.add.text(game.config.width / 2, game.config.height / 2, 'GAME OVER', scoreConfig).setOrigin(0.5);
             this.add.text(game.config.width / 2, game.config.height / 2 + 64, 'Press (R) to Restart or ← for Menu',
                 scoreConfig).setOrigin(0.5);
+                if (this.p1Score > this.highScore)
+                this.highScore = this.p1Score;
+            this.add.text(game.config.width / 2, game.config.height / 2 + 128,
+                'HIGHSCORE: ' + this.highScore, scoreConfig).setOrigin(0.5);
             this.gameOver = true;
         }, null, this);
+
+        this.clockRight = this.add.text(game.config.width / 2 + borderUISize * 4.5, 
+            borderUISize + borderPadding * 2, 'Time: ' + (game.settings.gameTimer / 1000), scoreConfig);
     }
 
     update() {
@@ -102,6 +109,8 @@ class Play extends Phaser.Scene {
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
             this.scene.start("menuScene");
         }
+
+        this.clockRight.text = 'Time: ' + Math.ceil((game.settings.gameTimer - this.clock.getElapsed()) / 1000);
 
         this.starfield.tilePositionX -= starSpeed;
         if (!this.gameOver) {
