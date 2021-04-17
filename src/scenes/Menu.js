@@ -55,7 +55,7 @@ class Menu extends Phaser.Scene {
         if (Phaser.Input.Keyboard.JustDown(keyRIGHT)) {
             // hard mode
             game.settings = {
-                spawnAmount: 4,
+                spawnAmount: 60,
                 spaceshipSpeed: 4,
                 gameTimer: 5000 //45000
             }

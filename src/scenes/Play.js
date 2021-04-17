@@ -37,11 +37,13 @@ class Play extends Phaser.Scene {
         this.p1Rocket = new Rocket(this, game.config.width / 2, game.config.height - borderUISize - borderPadding,
             'rocket').setOrigin(0.5, 0);
 
+        //add (x(spawn amount)) amount of spaceships
         this.ships = new Array;
-        //add spaceship (x(spawn amount))
-        for(let i = 0; i < game.settings.spawnAmount; i++) {
-            this.ships.push(new Spaceship(this, 0, borderUISize * (6 - i), 
-            'spaceship', 0 , 10 * (i+1)).setOrigin(0,0));
+        for (let i = 0; i < game.settings.spawnAmount && i < 5; i++) {
+            let ySpacing = (game.settings.spawnAmount > 5) ? 5 : game.settings.spawnAmount;
+            this.ships.push(new Spaceship(this, 0,
+                (borderUISize * ((2 * ySpacing) - (i))) + (borderPadding * (2 * (2 - i))),
+                'spaceship', 0, 10 * (i + 1)).setOrigin(0, 0));
             this.ships[i].create();
         }
 
@@ -95,14 +97,14 @@ class Play extends Phaser.Scene {
             this.add.text(game.config.width / 2, game.config.height / 2, 'GAME OVER', scoreConfig).setOrigin(0.5);
             this.add.text(game.config.width / 2, game.config.height / 2 + 128, 'Press (R) to Restart or ← for Menu',
                 scoreConfig).setOrigin(0.5);
-                if (this.p1Score > game.highScore)
+            if (this.p1Score > game.highScore)
                 game.highScore = this.p1Score;
             this.add.text(game.config.width / 2, game.config.height / 2 + 64,
                 'HIGHSCORE: ' + game.highScore, scoreConfig).setOrigin(0.5);
             this.gameOver = true;
         }, null, this);
 
-        this.clockRight = this.add.text(game.config.width / 2 + borderUISize * 4.5, 
+        this.clockRight = this.add.text(game.config.width / 2 + borderUISize * 4.5,
             borderUISize + borderPadding * 2, 'Time: ' + (game.settings.gameTimer / 1000), scoreConfig);
     }
 
@@ -115,18 +117,18 @@ class Play extends Phaser.Scene {
             this.scene.start("menuScene");
         }
 
-        
+
         this.starfield.tilePositionX -= starSpeed;
         if (!this.gameOver) {
             this.updateTime(this.ships);
             this.p1Rocket.update();
             //update all shaceships
-            for(let ship of this.ships)
+            for (let ship of this.ships)
                 ship.update();
         }
 
         //check collisions
-        for(let ship of this.ships){
+        for (let ship of this.ships) {
             if (this.checkCollision(this.p1Rocket, ship)) {
                 this.p1Rocket.reset();
                 this.shipExplode(ship);
@@ -168,9 +170,9 @@ class Play extends Phaser.Scene {
         this.timer = Math.ceil((game.settings.gameTimer - this.clock.getElapsed()) / 1000);
         this.clockRight.text = 'Time: ' + this.timer;
 
-        if(this.toggleSpeed && this.timer < 30){
+        if (this.toggleSpeed && this.timer < 30) {
             this.toggleSpeed = false;
-            for (let ship of shipArray){
+            for (let ship of shipArray) {
                 ship.moveSpeed *= 2;
             }
         }
