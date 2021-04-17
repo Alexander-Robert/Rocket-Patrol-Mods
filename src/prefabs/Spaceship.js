@@ -3,15 +3,15 @@ class Spaceship extends Phaser.GameObjects.Sprite {
         super(scene, x, y, texture, frame);
         scene.add.existing(this); //add Object to existing scene
         this.points = pointValue; //store pointValue
-        this.moveSpeed = game.settings.spaceshipSpeed;       //pixels per frame
+        this.moveSpeed = 3;       //pixels per frame
         //randomly assign the direction of the spaceship during construction
         this.directions = {
             LEFT: "left",
             RIGHT: "right"
         }
-        this.direction = (Phaser.Math.Between(0,1) == 0) ? this.directions.LEFT : this.directions.RIGHT; 
+        this.direction = (Phaser.Math.Between(0,1) == 0) ? this.directions.LEFT : this.directions.RIGHT;
+        this.setFlipX(this.direction == this.directions.RIGHT);
     }
-
     update() {
         switch(this.direction){
             //move spaceship left

@@ -10,9 +10,13 @@ class Play extends Phaser.Scene {
         this.load.image('p2', './assets/doughnut/player-2.png');
         this.load.image('p3', './assets/doughnut/player-3.png');
         this.load.image('p4', './assets/doughnut/player-4.png');
-        this.load.image('spaceship', './assets/spaceship.png');
         this.load.image('street', './assets/street/street.png');
-        //load spritesheet
+        
+        //load spritesheets
+        this.load.spritesheet('cop', './assets/cop/cop-spritesheet.png', {
+            frameWidth: 61,
+            frameHeight: 32,
+        });
         this.load.spritesheet('explosion', './assets/explosion.png', {
             frameWidth: 64,
             frameHeight: 32,
@@ -21,8 +25,8 @@ class Play extends Phaser.Scene {
         });
     }
     create() { //remember last things added in create are made first!!!!
-        //place starfield
-        this.starfield = this.add.tileSprite(0, 0,
+        //place street
+        this.street = this.add.tileSprite(0, 0,
             game.config.width, game.config.height, 'street').setOrigin(0, 0);
 
         //green UI background
@@ -37,13 +41,26 @@ class Play extends Phaser.Scene {
             borderUISize, game.config.height, 0xFFFFFF).setOrigin(0, 0);
 
 
+        //animation config
+        this.walkAnimation = this.anims.create({
+            key: 'walk',
+            frames: this.anims.generateFrameNumbers('cop', {
+                start: 0,
+                end: 7,
+            }),
+            frameRate: game.settings.spaceshipSpeed * 4,
+            repeat: -1,
+        });
+
         //add (x(spawn amount)) amount of spaceships
         this.ships = new Array;
         for (let i = 0; i < game.settings.spawnAmount && i < 5; i++) {
+            //cap the spawn amount to be 5. ySpacing prevents graphical errors if spawnAmount > 5
             let ySpacing = (game.settings.spawnAmount > 5) ? 5 : game.settings.spawnAmount;
             this.ships.push(new Spaceship(this, Phaser.Math.Between(0, game.config.width),
                 (borderUISize * ((2 * ySpacing) - (i))) + (borderPadding * (2 * (2 - i))),
-                'spaceship', 0, 10 * (i + 1)).setOrigin(0, 0));
+                'cop', 0, 10 * (i + 1)).setOrigin(0, 0));
+            this.ships[i].play('walk');
         }
 
         // define keys
@@ -146,6 +163,9 @@ class Play extends Phaser.Scene {
         //60-second play clock
         scoreConfig.fixedWidth = 0;
         this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
+            for(let ship of this.ships){
+                ship.stop(null,true);
+            }
             this.add.text(game.config.width / 2, game.config.height / 2, 'GAME OVER', scoreConfig).setOrigin(0.5);
             this.add.text(game.config.width / 2, game.config.height / 2 + 128, 'Press ↓ to Restart or ← for Menu',
                 scoreConfig).setOrigin(0.5);
@@ -231,6 +251,7 @@ class Play extends Phaser.Scene {
         if (this.toggleSpeed && this.timer < 30) {
             this.toggleSpeed = false;
             for (let ship of shipArray) {
+                this.walkAnimation.frameRate = ship.moveSpeed * 4;
                 ship.moveSpeed *= 2;
             }
         }
