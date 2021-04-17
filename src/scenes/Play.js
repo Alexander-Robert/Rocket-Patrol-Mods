@@ -33,9 +33,6 @@ class Play extends Phaser.Scene {
         this.add.rectangle(game.config.width - borderUISize, 0,
             borderUISize, game.config.height, 0xFFFFFF).setOrigin(0, 0);
 
-        //add rocket (player 1)
-        this.p1Rocket = new Rocket(this, game.config.width / 2, game.config.height - borderUISize - borderPadding,
-            'rocket').setOrigin(0.5, 0);
 
         //add (x(spawn amount)) amount of spaceships
         this.ships = new Array;
@@ -47,10 +44,56 @@ class Play extends Phaser.Scene {
         }
 
         // define keys
-        keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
-        keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+        //restart key
+        keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+        //player 1 controls
+        keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        //player 2 controls
+        keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+        //player 3 controls
+        keyT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T);
+        keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
+        keyH = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.H);
+        //player 4 controls
+        keyI = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.I);
+        keyJ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
+        keyL = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L);
+
+        //define key inputs for different players
+        this.keyInputArray = [
+            {
+                left: keyLEFT,
+                right: keyRIGHT,
+                fire: keyUP
+            },
+            {
+                left: keyA,
+                right: keyD,
+                fire: keyW
+            },
+            {
+                left: keyF,
+                right: keyH,
+                fire: keyT
+            },
+            {
+                left: keyJ,
+                right: keyL,
+                fire: keyI
+            }
+        ];
+
+        //add rocket(s) (players[1-4])
+        this.rockets = new Array;
+        for (let i = 0; i < game.settings.players; i++) {
+            this.rockets.push(new Rocket(this, game.config.width / (1.25 + i),
+                game.config.height - borderUISize - borderPadding, 'rocket',
+                this.keyInputArray[i].left, this.keyInputArray[i].right, this.keyInputArray[i].fire).setOrigin(0.5, 0));
+        }
 
         //animation config
         this.anims.create({
@@ -94,7 +137,7 @@ class Play extends Phaser.Scene {
         scoreConfig.fixedWidth = 0;
         this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
             this.add.text(game.config.width / 2, game.config.height / 2, 'GAME OVER', scoreConfig).setOrigin(0.5);
-            this.add.text(game.config.width / 2, game.config.height / 2 + 128, 'Press (R) to Restart or ← for Menu',
+            this.add.text(game.config.width / 2, game.config.height / 2 + 128, 'Press ↓ to Restart or ← for Menu',
                 scoreConfig).setOrigin(0.5);
             this.clockRight.text = 'Time: ' + 0;
             if (this.p1Score > game.highScore)
@@ -111,7 +154,7 @@ class Play extends Phaser.Scene {
 
     update() {
         //check key input for restart
-        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
+        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyDOWN)) {
             this.scene.restart();
         }
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
@@ -124,17 +167,20 @@ class Play extends Phaser.Scene {
         //update while game is going
         if (!this.gameOver) {
             this.updateTime(this.ships);
-            this.p1Rocket.update();
+            for (let rocket of this.rockets)
+                rocket.update();
             //update all shaceships
             for (let ship of this.ships)
                 ship.update();
         }
 
         //check collisions
-        for (let ship of this.ships) {
-            if (this.checkCollision(this.p1Rocket, ship)) {
-                this.p1Rocket.reset();
-                this.shipExplode(ship);
+        for (let rocket of this.rockets) {
+            for (let ship of this.ships) {
+                if (this.checkCollision(rocket, ship)) {
+                    rocket.reset();
+                    this.shipExplode(ship);
+                }
             }
         }
     }

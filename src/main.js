@@ -16,4 +16,8 @@ let starSpeed = 4; //pixels per frame
 game.highScore = 0;
 
 // reserve keyboard bindings
-let keyF, keyR, keyLEFT, keyRIGHT;
+let keyDOWN, 
+    keyUP, keyLEFT, keyRIGHT,
+    keyW, keyA, keyD,
+    keyT, keyF, keyH,
+    keyI, keyJ, keyL;
