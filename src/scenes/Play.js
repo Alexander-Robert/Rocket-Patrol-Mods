@@ -97,6 +97,7 @@ class Play extends Phaser.Scene {
             this.add.text(game.config.width / 2, game.config.height / 2, 'GAME OVER', scoreConfig).setOrigin(0.5);
             this.add.text(game.config.width / 2, game.config.height / 2 + 128, 'Press (R) to Restart or ← for Menu',
                 scoreConfig).setOrigin(0.5);
+            this.clockRight.text = 'Time: ' + 0;
             if (this.p1Score > game.highScore)
                 game.highScore = this.p1Score;
             this.add.text(game.config.width / 2, game.config.height / 2 + 64,
@@ -162,8 +163,8 @@ class Play extends Phaser.Scene {
         });
         //score add and repaint
         this.p1Score += ship.points;
-        this.clock.delay += ship.points * 50;
         game.settings.gameTimer += ship.points * 50;
+        this.clock.delay += ship.points * 50;
         this.scoreLeft.text = this.p1Score;
         this.sound.play('sfx_explosion');
     }
