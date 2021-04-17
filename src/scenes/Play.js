@@ -62,6 +62,11 @@ class Play extends Phaser.Scene {
             frameRate: 30
         });
 
+        //initialize timer
+        this.timer = 0;
+
+        this.toggleSpeed = true; //used to speed up spaceships once
+
         //initialize scores
         this.p1Score = 0;
 
@@ -110,10 +115,10 @@ class Play extends Phaser.Scene {
             this.scene.start("menuScene");
         }
 
-        this.clockRight.text = 'Time: ' + Math.ceil((game.settings.gameTimer - this.clock.getElapsed()) / 1000);
-
+        
         this.starfield.tilePositionX -= starSpeed;
         if (!this.gameOver) {
+            this.updateTime([this.ship01,this.ship02,this.ship03]);
             this.p1Rocket.update();
             //update shaceships (x3)
             this.ship01.update();
@@ -164,5 +169,17 @@ class Play extends Phaser.Scene {
         this.p1Score += ship.points;
         this.scoreLeft.text = this.p1Score;
         this.sound.play('sfx_explosion');
+    }
+
+    updateTime(shipArray) {
+        this.timer = Math.ceil((game.settings.gameTimer - this.clock.getElapsed()) / 1000);
+        this.clockRight.text = 'Time: ' + this.timer;
+
+        if(this.toggleSpeed && this.timer < 30){
+            this.toggleSpeed = false;
+            for (let ship of shipArray){
+                ship.moveSpeed *= 2;
+            }
+        }
     }
 }
