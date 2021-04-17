@@ -22,7 +22,7 @@ class Menu extends Phaser.Scene {
         game.settings = {
             players: 1,
             spawnAmount: 3,
-            spaceshipSpeed: 3,
+            guardSpeed: 3,
             gameTimer: 60000
         }
 
@@ -43,10 +43,10 @@ class Menu extends Phaser.Scene {
         this.add.text(game.config.width / 2, game.config.height / 2 - borderUISize - borderPadding,
             'GUARD PATROL', menuConfig).setOrigin(0.5);
         this.add.text(game.config.width / 2, game.config.height / 2,
-            'Use <--> arrows to move & (F) to fire', menuConfig).setOrigin(0.5);
+            'Use ←→ arrows to move & ↑ to fire', menuConfig).setOrigin(0.5);
         menuConfig.backgroundColor = '#00FF00';
         this.add.text(game.config.width / 2, game.config.height / 2 + borderUISize + borderPadding,
-            'Press <- for Novice or -> for Expert', menuConfig).setOrigin(0.5);
+            'Press ← for Novice or → for Expert', menuConfig).setOrigin(0.5);
         this.add.text(game.config.width / 2, game.config.height / 2 + borderUISize * 5,
             'HIGHSCORE: ' + game.highScore, menuConfig).setOrigin(0.5);
 
@@ -90,7 +90,7 @@ class Menu extends Phaser.Scene {
         if (Phaser.Input.Keyboard.JustDown(keyLEFT)) {
             // easy mode
             game.settings.spawnAmount = 3;
-            game.settings.spaceshipSpeed = 3;
+            game.settings.guardSpeed = 3;
             game.settings.gameTimer = 60000;
 
             this.sound.play('sfx_select');
@@ -99,7 +99,7 @@ class Menu extends Phaser.Scene {
         if (Phaser.Input.Keyboard.JustDown(keyUP)) {
             // medium mode
             game.settings.spawnAmount = 3;
-            game.settings.spaceshipSpeed = 4;
+            game.settings.guardSpeed = 4;
             game.settings.gameTimer = 45000;
             this.sound.play('sfx_select');
             this.scene.start('playScene');
@@ -107,7 +107,7 @@ class Menu extends Phaser.Scene {
         if (Phaser.Input.Keyboard.JustDown(keyRIGHT)) {
             // hard mode
             game.settings.spawnAmount = 5;
-            game.settings.spaceshipSpeed = 5;
+            game.settings.guardSpeed = 5;
             game.settings.gameTimer = 5000; //30000
             this.sound.play('sfx_select');
             this.scene.start('playScene');

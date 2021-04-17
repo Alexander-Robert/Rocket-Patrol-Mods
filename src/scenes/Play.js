@@ -48,19 +48,19 @@ class Play extends Phaser.Scene {
                 start: 0,
                 end: 7,
             }),
-            frameRate: game.settings.spaceshipSpeed * 4,
+            frameRate: game.settings.guardSpeed * 4,
             repeat: -1,
         });
 
-        //add (x(spawn amount)) amount of spaceships
-        this.ships = new Array;
+        //add (x(spawn amount)) amount of guards
+        this.guards = new Array;
         for (let i = 0; i < game.settings.spawnAmount && i < 5; i++) {
             //cap the spawn amount to be 5. ySpacing prevents graphical errors if spawnAmount > 5
             let ySpacing = (game.settings.spawnAmount > 5) ? 5 : game.settings.spawnAmount;
-            this.ships.push(new Spaceship(this, Phaser.Math.Between(0, game.config.width),
+            this.guards.push(new Guard(this, Phaser.Math.Between(0, game.config.width),
                 (borderUISize * ((2 * ySpacing) - (i))) + (borderPadding * (2 * (2 - i))),
                 'cop', 0, 10 * (i + 1)).setOrigin(0, 0));
-            this.ships[i].play('walk');
+            this.guards[i].play('walk');
         }
 
         // define keys
@@ -111,10 +111,10 @@ class Play extends Phaser.Scene {
             }
         ];
 
-        //add rocket(s) (players[1-4])
-        this.rockets = new Array;
+        //add doughnut(s) (players[1-4])
+        this.doughnuts = new Array;
         for (let i = 0; i < game.settings.players; i++) {
-            this.rockets.push(new Rocket(this, game.config.width / (1.25 + i),
+            this.doughnuts.push(new Doughnut(this, game.config.width / (1.25 + i),
                 game.config.height - borderUISize - borderPadding, 
                 this.playerPropertyArray[i].image,
                 this.playerPropertyArray[i].left, 
@@ -136,7 +136,7 @@ class Play extends Phaser.Scene {
         //initialize timer
         this.timer = 0;
 
-        this.toggleSpeed = true; //used to speed up spaceships past 30 seconds left
+        this.toggleSpeed = true; //used to speed up guards past 30 seconds left
 
         //initialize scores
         this.p1Score = 0;
@@ -163,8 +163,8 @@ class Play extends Phaser.Scene {
         //60-second play clock
         scoreConfig.fixedWidth = 0;
         this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
-            for(let ship of this.ships){
-                ship.stop(null,true);
+            for(let guard of this.guards){
+                guard.stop(null,true);
             }
             this.add.text(game.config.width / 2, game.config.height / 2, 'GAME OVER', scoreConfig).setOrigin(0.5);
             this.add.text(game.config.width / 2, game.config.height / 2 + 128, 'Press ↓ to Restart or ← for Menu',
@@ -193,31 +193,31 @@ class Play extends Phaser.Scene {
         
         //update while game is going
         if (!this.gameOver) {
-            this.updateTime(this.ships);
-            for (let rocket of this.rockets)
-                rocket.update();
-            //update all shaceships
-            for (let ship of this.ships)
-                ship.update();
+            this.updateTime(this.guards);
+            for (let doughnut of this.doughnuts)
+                doughnut.update();
+            //update all guards
+            for (let guard of this.guards)
+                guard.update();
         }
 
         //check collisions
-        for (let rocket of this.rockets) {
-            for (let ship of this.ships) {
-                if (this.checkCollision(rocket, ship)) {
-                    rocket.reset();
-                    this.shipExplode(ship);
+        for (let doughnut of this.doughnuts) {
+            for (let guard of this.guards) {
+                if (this.checkCollision(doughnut, guard)) {
+                    doughnut.reset();
+                    this.guardExplode(guard);
                 }
             }
         }
     }
 
-    checkCollision(rocket, ship) {
+    checkCollision(doughnut, guard) {
         //simple AABB checking
-        if (rocket.x < ship.x + ship.width &&
-            rocket.x + rocket.width > ship.x &&
-            rocket.y < ship.y + ship.height &&
-            rocket.height + rocket.y > ship.y) {
+        if (doughnut.x < guard.x + guard.width &&
+            doughnut.x + doughnut.width > guard.x &&
+            doughnut.y < guard.y + guard.height &&
+            doughnut.height + doughnut.y > guard.y) {
             return true;
         }
         else {
@@ -225,34 +225,34 @@ class Play extends Phaser.Scene {
         }
     }
 
-    shipExplode(ship) {
-        //temporarily hide ship
-        ship.alpha = 0;
-        //create explosion sprite at ship's position
-        let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0, 0);
+    guardExplode(guard) {
+        //temporarily hide guard
+        guard.alpha = 0;
+        //create explosion sprite at guard's position
+        let boom = this.add.sprite(guard.x, guard.y, 'explosion').setOrigin(0, 0);
         boom.anims.play('explode');             // play explode animation
         boom.on('animationcomplete', () => {    // callback after anim completes
-            ship.reset();                         // reset ship position
-            ship.alpha = 1;                       // make ship visible again
+            guard.reset();                         // reset guard position
+            guard.alpha = 1;                       // make guard visible again
             boom.destroy();                       // remove explosion sprite
         });
         //score add and repaint
-        this.p1Score += ship.points;
-        game.settings.gameTimer += ship.points * 50;
-        this.clock.delay += ship.points * 50;
+        this.p1Score += guard.points;
+        game.settings.gameTimer += guard.points * 50;
+        this.clock.delay += guard.points * 50;
         this.scoreLeft.text = this.p1Score;
         this.sound.play('sfx_explosion');
     }
 
-    updateTime(shipArray) {
+    updateTime(guardArray) {
         this.timer = Math.ceil((game.settings.gameTimer - this.clock.getElapsed()) / 1000);
         this.clockRight.text = 'Time: ' + this.timer;
 
         if (this.toggleSpeed && this.timer < 30) {
             this.toggleSpeed = false;
-            for (let ship of shipArray) {
-                this.walkAnimation.frameRate = ship.moveSpeed * 4;
-                ship.moveSpeed *= 2;
+            for (let guard of guardArray) {
+                this.walkAnimation.frameRate = guard.moveSpeed * 4;
+                guard.moveSpeed *= 2;
             }
         }
     }

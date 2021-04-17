@@ -1,12 +1,12 @@
-// Rocket (player) prefab
-class Rocket extends Phaser.GameObjects.Sprite {
+// doughnut (player) prefab
+class Doughnut extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, texture, LEFT, RIGHT, FIRE, frame) {
         super(scene, x, y, texture, frame);
 
         //add Object to existing scene
         scene.add.existing(this);
-        this.isFiring = false; //track rocket firing status
-        this.moveSpeed = game.settings.spaceshipSpeed; //pixels per frame
+        this.isFiring = false; //track doughnut firing status
+        this.moveSpeed = 3; //pixels per frame
         this.sfxRocket = scene.sound.add('sfx_rocket'); // add rocket sfx
         this.LEFT = LEFT;
         this.RIGHT = RIGHT;
@@ -27,7 +27,7 @@ class Rocket extends Phaser.GameObjects.Sprite {
             this.isFiring = true;
             this.sfxRocket.play(); //play sfx
         }
-        // if fired, move the rocket up
+        // if fired, move the doughnut up
         if (this.isFiring && this.y >= borderUISize * 3 + borderPadding) {
             this.y -= this.moveSpeed;
         }
@@ -37,7 +37,7 @@ class Rocket extends Phaser.GameObjects.Sprite {
         }
     }
 
-    //reset rocket to "ground"
+    //reset doughnut to "ground"
     reset() {
         this.isFiring = false;
         this.y = game.config.height - borderUISize - borderPadding;

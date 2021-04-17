@@ -1,10 +1,10 @@
-class Spaceship extends Phaser.GameObjects.Sprite {
+class Guard extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, texture, frame, pointValue) {
         super(scene, x, y, texture, frame);
         scene.add.existing(this); //add Object to existing scene
         this.points = pointValue; //store pointValue
         this.moveSpeed = 3;       //pixels per frame
-        //randomly assign the direction of the spaceship during construction
+        //randomly assign the direction of the guard during construction
         this.directions = {
             LEFT: "left",
             RIGHT: "right"
@@ -14,14 +14,14 @@ class Spaceship extends Phaser.GameObjects.Sprite {
     }
     update() {
         switch(this.direction){
-            //move spaceship left
+            //move guard left
             case this.directions.LEFT:
                 this.x -= this.moveSpeed;
         // wrap around from left to right edge
         if (this.x <= 0 - this.width)
             this.reset();
                 break;
-            //move spaceship left
+            //move gaurd left
             case this.directions.RIGHT:
                 this.x += this.moveSpeed;
         // wrap around from right to left edge
