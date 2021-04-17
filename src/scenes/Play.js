@@ -236,10 +236,10 @@ class Play extends Phaser.Scene {
             guard.alpha = 1;                       // make guard visible again
             boom.destroy();                       // remove explosion sprite
         });
-        //score add and repaint
+        //add to individual score and timer
         this.p1Score += guard.points;
-        game.settings.gameTimer += guard.points * 50;
-        this.clock.delay += guard.points * 50;
+        game.settings.gameTimer += (guard.points * 50) / game.settings.players;
+        this.clock.delay += (guard.points * 50) / game.settings.players;
         this.scoreLeft.text = this.p1Score;
         this.sound.play('sfx_explosion');
     }
