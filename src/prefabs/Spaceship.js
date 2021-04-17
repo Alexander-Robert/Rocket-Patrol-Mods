@@ -12,11 +12,6 @@ class Spaceship extends Phaser.GameObjects.Sprite {
         this.direction = (Phaser.Math.Between(0,1) == 0) ? this.directions.LEFT : this.directions.RIGHT; 
     }
 
-    //TODO: remove create(), move x val to Play.js create for loop
-    create(){
-        this.x = Phaser.Math.Between(0, game.config.width); 
-    }
-
     update() {
         switch(this.direction){
             //move spaceship left

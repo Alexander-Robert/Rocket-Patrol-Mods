@@ -41,10 +41,9 @@ class Play extends Phaser.Scene {
         this.ships = new Array;
         for (let i = 0; i < game.settings.spawnAmount && i < 5; i++) {
             let ySpacing = (game.settings.spawnAmount > 5) ? 5 : game.settings.spawnAmount;
-            this.ships.push(new Spaceship(this, 0,
+            this.ships.push(new Spaceship(this, Phaser.Math.Between(0, game.config.width),
                 (borderUISize * ((2 * ySpacing) - (i))) + (borderPadding * (2 * (2 - i))),
                 'spaceship', 0, 10 * (i + 1)).setOrigin(0, 0));
-            this.ships[i].create();
         }
 
         // define keys
@@ -67,7 +66,7 @@ class Play extends Phaser.Scene {
         //initialize timer
         this.timer = 0;
 
-        this.toggleSpeed = true; //used to speed up spaceships once
+        this.toggleSpeed = true; //used to speed up spaceships past 30 seconds left
 
         //initialize scores
         this.p1Score = 0;
@@ -105,6 +104,7 @@ class Play extends Phaser.Scene {
             this.gameOver = true;
         }, null, this);
 
+        //display clock
         this.clockRight = this.add.text(game.config.width / 2 + borderUISize * 4.5,
             borderUISize + borderPadding * 2, 'Time: ' + (game.settings.gameTimer / 1000), scoreConfig);
     }
@@ -118,8 +118,10 @@ class Play extends Phaser.Scene {
             this.scene.start("menuScene");
         }
 
-
+        //scroll background
         this.starfield.tilePositionX -= starSpeed;
+        
+        //update while game is going
         if (!this.gameOver) {
             this.updateTime(this.ships);
             this.p1Rocket.update();
