@@ -6,7 +6,10 @@ class Play extends Phaser.Scene {
     // init(), preload(), create(), update()
     preload() {
         //load images/tile sprites
-        this.load.image('rocket', './assets/rocket.png');
+        this.load.image('p1', './assets/doughnut/player-1.png');
+        this.load.image('p2', './assets/doughnut/player-2.png');
+        this.load.image('p3', './assets/doughnut/player-3.png');
+        this.load.image('p4', './assets/doughnut/player-4.png');
         this.load.image('spaceship', './assets/spaceship.png');
         this.load.image('starfield', './assets/starfield.png');
         //load spritesheet
@@ -64,23 +67,27 @@ class Play extends Phaser.Scene {
         keyL = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L);
 
         //define key inputs for different players
-        this.keyInputArray = [
+        this.playerPropertyArray = [
             {
+                image: 'p1',
                 left: keyLEFT,
                 right: keyRIGHT,
                 fire: keyUP
             },
             {
+                image: 'p2',
                 left: keyA,
                 right: keyD,
                 fire: keyW
             },
             {
+                image: 'p3',
                 left: keyF,
                 right: keyH,
                 fire: keyT
             },
             {
+                image: 'p4',
                 left: keyJ,
                 right: keyL,
                 fire: keyI
@@ -91,8 +98,11 @@ class Play extends Phaser.Scene {
         this.rockets = new Array;
         for (let i = 0; i < game.settings.players; i++) {
             this.rockets.push(new Rocket(this, game.config.width / (1.25 + i),
-                game.config.height - borderUISize - borderPadding, 'rocket',
-                this.keyInputArray[i].left, this.keyInputArray[i].right, this.keyInputArray[i].fire).setOrigin(0.5, 0));
+                game.config.height - borderUISize - borderPadding, 
+                this.playerPropertyArray[i].image,
+                this.playerPropertyArray[i].left, 
+                this.playerPropertyArray[i].right, 
+                this.playerPropertyArray[i].fire));
         }
 
         //animation config

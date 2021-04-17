@@ -41,7 +41,7 @@ class Menu extends Phaser.Scene {
         }
         //show menu text
         this.add.text(game.config.width / 2, game.config.height / 2 - borderUISize - borderPadding,
-            'ROCKET PATROL', menuConfig).setOrigin(0.5);
+            'GUARD PATROL', menuConfig).setOrigin(0.5);
         this.add.text(game.config.width / 2, game.config.height / 2,
             'Use <--> arrows to move & (F) to fire', menuConfig).setOrigin(0.5);
         menuConfig.backgroundColor = '#00FF00';
@@ -68,12 +68,12 @@ class Menu extends Phaser.Scene {
 
         //create array of button images
         this.buttons = [
-            this.add.sprite(borderUISize * 2, borderUISize * 2, 'button'),
-            this.add.sprite(borderUISize * 6, borderUISize * 2, 'button'),
-            this.add.sprite(borderUISize * 10, borderUISize * 2, 'button'),
-            this.add.sprite(borderUISize * 2, borderUISize * 5, 'button'),
-            this.add.sprite(borderUISize * 6, borderUISize * 5, 'button'),
-            this.add.sprite(borderUISize * 10, borderUISize * 5, 'button'),
+            this.add.sprite(borderUISize * 2,  borderUISize * 2,   'button'),
+            this.add.sprite(borderUISize * 6,  borderUISize * 2,   'button'),
+            this.add.sprite(borderUISize * 10, borderUISize * 2,   'button'),
+            this.add.sprite(borderUISize * 2,  borderUISize * 5,   'button'),
+            this.add.sprite(borderUISize * 6,  borderUISize * 5,   'button'),
+            this.add.sprite(borderUISize * 10, borderUISize * 5,   'button'),
             this.add.sprite(borderUISize * 14, borderUISize * 3.5, 'button')
         ];
 
