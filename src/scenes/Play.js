@@ -38,11 +38,12 @@ class Play extends Phaser.Scene {
             'rocket').setOrigin(0.5, 0);
 
         //add spaceship (x3)
-        this.ship01 = new Spaceship(this, game.config.width + borderUISize * 6, borderUISize * 4,
+        this.ship01 = new Spaceship(this, 0, borderUISize * 4,
             'spaceship', 0, 30).setOrigin(0, 0);
-        this.ship02 = new Spaceship(this, game.config.width + borderUISize * 3, borderUISize * 5 + borderPadding * 2,
+        this.ship01.create();
+        this.ship02 = new Spaceship(this, 0, borderUISize * 5 + borderPadding * 2,
             'spaceship', 0, 20).setOrigin(0, 0);
-        this.ship03 = new Spaceship(this, game.config.width, borderUISize * 6 + borderPadding * 4,
+        this.ship03 = new Spaceship(this, 0, borderUISize * 6 + borderPadding * 4,
             'spaceship', 0, 10).setOrigin(0, 0);
 
         // define keys
