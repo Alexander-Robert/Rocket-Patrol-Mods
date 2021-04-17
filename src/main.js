@@ -10,7 +10,6 @@ let game = new Phaser.Game(config);
 //set UI sizes
 let borderUISize = game.config.height / 15;
 let borderPadding = borderUISize / 3;
-let starSpeed = 4; //pixels per frame
 
 //initialize high score
 game.highScore = 0;

@@ -11,7 +11,7 @@ class Play extends Phaser.Scene {
         this.load.image('p3', './assets/doughnut/player-3.png');
         this.load.image('p4', './assets/doughnut/player-4.png');
         this.load.image('spaceship', './assets/spaceship.png');
-        this.load.image('starfield', './assets/starfield.png');
+        this.load.image('street', './assets/street/street.png');
         //load spritesheet
         this.load.spritesheet('explosion', './assets/explosion.png', {
             frameWidth: 64,
@@ -23,7 +23,7 @@ class Play extends Phaser.Scene {
     create() { //remember last things added in create are made first!!!!
         //place starfield
         this.starfield = this.add.tileSprite(0, 0,
-            game.config.width, game.config.height, 'starfield').setOrigin(0, 0);
+            game.config.width, game.config.height, 'street').setOrigin(0, 0);
 
         //green UI background
         this.add.rectangle(0, borderUISize + borderPadding,
@@ -170,9 +170,6 @@ class Play extends Phaser.Scene {
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
             this.scene.start("menuScene");
         }
-
-        //scroll background
-        this.starfield.tilePositionX -= starSpeed;
         
         //update while game is going
         if (!this.gameOver) {
