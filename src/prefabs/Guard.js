@@ -4,6 +4,7 @@ class Guard extends Phaser.GameObjects.Sprite {
         scene.add.existing(this); //add Object to existing scene
         this.points = pointValue; //store pointValue
         this.moveSpeed = 3;       //pixels per frame
+        this.bloated = 0;         //bloated behavior for eating doughnuts
         //randomly assign the direction of the guard during construction
         this.directions = {
             LEFT: "left",
@@ -12,6 +13,7 @@ class Guard extends Phaser.GameObjects.Sprite {
         this.direction = (Phaser.Math.Between(0,1) == 0) ? this.directions.LEFT : this.directions.RIGHT;
         this.setFlipX(this.direction == this.directions.RIGHT);
     }
+
     update() {
         switch(this.direction){
             //move guard left

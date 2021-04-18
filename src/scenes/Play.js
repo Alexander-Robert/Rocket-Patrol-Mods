@@ -23,6 +23,10 @@ class Play extends Phaser.Scene {
             startFrame: 0,
             endFrame: 9
         });
+
+        //load atlas
+        this.load.atlas('fat', 'assets/cop/fat-spritesheet.png', 
+        'assets/cop/fat-sprites.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
     }
     create() { //remember last things added in create are made first!!!!
         //place street
@@ -53,14 +57,35 @@ class Play extends Phaser.Scene {
         });
 
         //add (x(spawn amount)) amount of guards
+        //guards is an array of objects, the objects are the guard sprite from Guard class, and an array of fat sprites
         this.guards = new Array;
+        this.fatLabels = ['fat3', 'fat2', 'fat1'];
+
         for (let i = 0; i < game.settings.spawnAmount && i < 5; i++) {
             //cap the spawn amount to be 5. ySpacing prevents graphical errors if spawnAmount > 5
             let ySpacing = (game.settings.spawnAmount > 5) ? 5 : game.settings.spawnAmount;
-            this.guards.push(new Guard(this, Phaser.Math.Between(0, game.config.width),
+            this.guards.push( {
+                sprite: new Guard(this, Phaser.Math.Between(0, game.config.width),
                 (borderUISize * ((2 * ySpacing) - (i))) + (borderPadding * (2 * (2 - i))),
-                'cop', 0, 10 * (i + 1)).setOrigin(0, 0));
-            this.guards[i].play('walk');
+                'cop', 0, 10 * (i + 1)).setOrigin(0, 0),
+                fat: []
+            });
+            //create fatImages
+            for (let j = 0; j < this.fatLabels.length; j++) {
+                //add each fat image to the array
+                this.guards[i].fat[j] = this.add.sprite(
+                    this.guards[i].sprite.x + (this.guards[i].sprite.width /2), 
+                    this.guards[i].sprite.y + (this.guards[i].sprite.height /2), 
+                    'fat', this.fatLabels[j]);
+                //flip fat image to the correct direction
+                this.guards[i].fat[j].flipX = (this.guards[i].sprite.direction == 'right');
+                //make fat invisible initially
+                this.guards[i].fat[j].alpha = 0; 
+        }
+        //set each sprite image depth above the fat images
+        this.guards[i].sprite.setDepth(this.guards[i].fat[this.guards[i].fat.length - 1].depth + 1);
+        //play the walking animation for the gaurd's sprite
+        this.guards[i].sprite.play('walk');
         }
 
         // define keys
@@ -164,7 +189,7 @@ class Play extends Phaser.Scene {
         scoreConfig.fixedWidth = 0;
         this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
             for(let guard of this.guards){
-                guard.stop(null,true);
+                guard.sprite.stop(null,true);
             }
             this.add.text(game.config.width / 2, game.config.height / 2, 'GAME OVER', scoreConfig).setOrigin(0.5);
             this.add.text(game.config.width / 2, game.config.height / 2 + 128, 'Press ↓ to Restart or ← for Menu',
@@ -191,22 +216,31 @@ class Play extends Phaser.Scene {
             this.scene.start("menuScene");
         }
         
+
+
         //update while game is going
         if (!this.gameOver) {
             this.updateTime(this.guards);
+            //update all doughnuts
             for (let doughnut of this.doughnuts)
                 doughnut.update();
             //update all guards
-            for (let guard of this.guards)
-                guard.update();
+            for (let guard of this.guards){
+                guard.sprite.update();
+                //anchor fat images to guards
+                for(let fatImages of guard.fat){
+                    fatImages.x = guard.sprite.x + (guard.sprite.width / 2);
+                    fatImages.y = guard.sprite.y + (guard.sprite.height / 2);
+                }
+            }
         }
 
         //check collisions
         for (let doughnut of this.doughnuts) {
             for (let guard of this.guards) {
-                if (this.checkCollision(doughnut, guard)) {
+                if (this.checkCollision(doughnut, guard.sprite)) {
                     doughnut.reset();
-                    this.guardExplode(guard);
+                    this.guardExplode(guard.sprite);
                 }
             }
         }
@@ -251,8 +285,8 @@ class Play extends Phaser.Scene {
         if (this.toggleSpeed && this.timer < 30) {
             this.toggleSpeed = false;
             for (let guard of guardArray) {
-                this.walkAnimation.frameRate = guard.moveSpeed * 4;
-                guard.moveSpeed *= 2;
+                this.walkAnimation.frameRate = guard.sprite.moveSpeed * 4;
+                guard.sprite.moveSpeed *= 2;
             }
         }
     }
