@@ -33,16 +33,13 @@ class Play extends Phaser.Scene {
         this.street = this.add.tileSprite(0, 0,
             game.config.width, game.config.height, 'street').setOrigin(0, 0);
 
-        //green UI background
-        this.add.rectangle(0, borderUISize + borderPadding,
-            game.config.width, borderUISize * 2, 0x00FF00).setOrigin(0, 0);
-        //white borders around game screen
-        this.add.rectangle(0, 0, game.config.width, borderUISize, 0xFFFFFF).setOrigin(0, 0);
-        this.add.rectangle(0, game.config.height - borderUISize,
-            game.config.width, borderUISize, 0xFFFFFF).setOrigin(0, 0);
-        this.add.rectangle(0, 0, borderUISize, game.config.height, 0xFFFFFF).setOrigin(0, 0);
-        this.add.rectangle(game.config.width - borderUISize, 0,
-            borderUISize, game.config.height, 0xFFFFFF).setOrigin(0, 0);
+        // //white borders around game screen
+        // this.add.rectangle(0, 0, game.config.width, borderUISize, 0xFFFFFF).setOrigin(0, 0);
+        // this.add.rectangle(0, game.config.height - borderUISize,
+        //     game.config.width, borderUISize, 0xFFFFFF).setOrigin(0, 0);
+        // this.add.rectangle(0, 0, borderUISize, game.config.height, 0xFFFFFF).setOrigin(0, 0);
+        // this.add.rectangle(game.config.width - borderUISize, 0,
+        //     borderUISize, game.config.height, 0xFFFFFF).setOrigin(0, 0);
 
 
         //animation config
@@ -158,7 +155,7 @@ class Play extends Phaser.Scene {
         this.doughnuts = new Array;
         for (let i = 0; i < game.settings.players; i++) {
             this.doughnuts.push(new Doughnut(this, game.config.width / (1.25 + i),
-                game.config.height - borderUISize - borderPadding,
+                game.config.height - borderUISize + borderPadding,
                 this.playerPropertyArray[i].image,
                 this.playerPropertyArray[i].left,
                 this.playerPropertyArray[i].right,
@@ -167,9 +164,9 @@ class Play extends Phaser.Scene {
             //initialize scores
             this.scores.pointAmount.push(0);
             this.scores.scoreBox.push(this.add.text((borderUISize + borderPadding) + (i * 100), 
-            borderUISize + borderPadding * 2, this.scores.pointAmount[i], scoreConfig));
+            borderPadding, this.scores.pointAmount[i], scoreConfig));
             this.add.image((borderUISize + borderPadding) + (i * 100) + 70,
-            borderUISize + borderPadding * 2 + 18, this.playerPropertyArray[i].image);
+            borderPadding + 18, this.playerPropertyArray[i].image);
         }
 
         //animation config
@@ -197,9 +194,10 @@ class Play extends Phaser.Scene {
             for (let guard of this.guards) {
                 guard.sprite.stop(null, true);
             }
-            this.add.text(game.config.width / 2, game.config.height / 2, 'GAME OVER', scoreConfig).setOrigin(0.5);
+            this.add.text(game.config.width / 2, game.config.height / 2, 'GAME OVER', 
+            scoreConfig).setOrigin(0.5).setDepth(100);
             this.add.text(game.config.width / 2, game.config.height / 2 + 128, 'Press ↓ to Restart or ← for Menu',
-                scoreConfig).setOrigin(0.5);
+                scoreConfig).setOrigin(0.5).setDepth(100);
             this.clockRight.text = 'Time: ' + 0;
             let winnerString = "";
             for(let i = 0; i < this.scores.pointAmount.length; i++){
@@ -210,13 +208,13 @@ class Play extends Phaser.Scene {
             }
             this.add.text(game.config.width / 2, game.config.height / 2 + 64,
                 'HIGHSCORE: ' + game.highScore + winnerString,
-                scoreConfig).setOrigin(0.5);
+                scoreConfig).setOrigin(0.5).setDepth(100);
             this.gameOver = true;
         }, null, this);
 
         //display clock
         this.clockRight = this.add.text(game.config.width / 2 + borderUISize * 4.5,
-            borderUISize + borderPadding * 2, 'Time: ' + (game.settings.gameTimer / 1000), scoreConfig);
+            borderPadding, 'Time: ' + (game.settings.gameTimer / 1000), scoreConfig);
     }
 
     update() {

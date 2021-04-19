@@ -29,11 +29,11 @@ class Doughnut extends Phaser.GameObjects.Sprite {
             this.sfxRocket.play(); //play sfx
         }
         // if fired, move the doughnut up
-        if (this.isFiring && this.y >= borderUISize * 3 + borderPadding) {
+        if (this.isFiring && this.y >= borderUISize + this.height) {
             this.y -= this.moveSpeed;
         }
 
-        if (this.y <= borderUISize * 3 + borderPadding) {
+        if (this.y <= borderUISize + this.height) {
             this.reset();
         }
     }
@@ -41,6 +41,6 @@ class Doughnut extends Phaser.GameObjects.Sprite {
     //reset doughnut to "ground"
     reset() {
         this.isFiring = false;
-        this.y = game.config.height - borderUISize - borderPadding;
+        this.y = game.config.height - borderUISize + borderPadding;
     }
 }
