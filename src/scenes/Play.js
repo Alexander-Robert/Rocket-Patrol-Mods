@@ -29,15 +29,6 @@ class Play extends Phaser.Scene {
         this.street = this.add.tileSprite(0, 0,
             game.config.width, game.config.height, 'street').setOrigin(0, 0);
 
-        // //white borders around game screen
-        // this.add.rectangle(0, 0, game.config.width, borderUISize, 0xFFFFFF).setOrigin(0, 0);
-        // this.add.rectangle(0, game.config.height - borderUISize,
-        //     game.config.width, borderUISize, 0xFFFFFF).setOrigin(0, 0);
-        // this.add.rectangle(0, 0, borderUISize, game.config.height, 0xFFFFFF).setOrigin(0, 0);
-        // this.add.rectangle(game.config.width - borderUISize, 0,
-        //     borderUISize, game.config.height, 0xFFFFFF).setOrigin(0, 0);
-
-
         //animation config
         this.walkAnimation = this.anims.create({
             key: 'walk',
@@ -304,7 +295,8 @@ class Play extends Phaser.Scene {
             guard.fat[guard.fat.length - 1].alpha = 0;
             guard.sprite.bloated = 0;
             //create explosion sprite at guard's position
-            let boom = this.add.sprite(guard.sprite.x, guard.sprite.y, 'explosion').setOrigin(0, 0);
+            let boom = this.add.sprite(guard.sprite.x + (guard.sprite.width / 2), 
+            guard.sprite.y + (guard.sprite.height / 2), 'explosion').setOrigin(0.5, 0.5);
             boom.anims.play('explode');             // play explode animation
             boom.on('animationcomplete', () => {    // callback after anim completes
                 guard.sprite.reset();                         // reset guard position

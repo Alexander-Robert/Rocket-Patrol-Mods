@@ -52,6 +52,8 @@ class Menu extends Phaser.Scene {
         menuConfig.backgroundColor = '#00FF00';
         this.add.text(game.config.width / 2, game.config.height / 2 + borderUISize + borderPadding,
             '← for easy, ↑ for medium or → for hard', menuConfig).setOrigin(0.5);
+        this.add.text(game.config.width / 2, game.config.height / 2 + borderUISize * 2.5,
+            'For custom select values & ↓ to start', menuConfig).setOrigin(0.5);
         this.add.text(game.config.width / 2, game.config.height / 2 + borderUISize * 5,
             'HIGHSCORE: ' + game.highScore, menuConfig).setOrigin(0.5);
 
@@ -79,7 +81,6 @@ class Menu extends Phaser.Scene {
             this.add.sprite(borderUISize * 2,  borderUISize * 5,   'button'),
             this.add.sprite(borderUISize * 6,  borderUISize * 5,   'button'),
             this.add.sprite(borderUISize * 10, borderUISize * 5,   'button'),
-            this.add.sprite(borderUISize * 14, borderUISize * 3.5, 'button')
         ];
 
         //initialize all buttons
@@ -87,6 +88,7 @@ class Menu extends Phaser.Scene {
 
         // define keys
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+        keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
     }
@@ -117,6 +119,11 @@ class Menu extends Phaser.Scene {
             this.sound.play('sfx_select');
             this.scene.start('playScene');
         }
+        if (Phaser.Input.Keyboard.JustDown(keyDOWN)) {
+            // custom mode
+            this.sound.play('sfx_select');
+            this.scene.start('playScene');
+        }
 
         //update option numbers
         this.playerCount.text = game.settings.players;
@@ -127,9 +134,8 @@ class Menu extends Phaser.Scene {
     initializeButtons() {
         //set buttons to be interactive
         for (let i = 0; i < this.buttons.length; i++) {
-            //align button directions
+            //align button directions (up or down based on height)
             this.buttons[i].angle += (this.buttons[i].y > borderUISize * 2) ? 90 : -90;
-            this.buttons[this.buttons.length - 1].angle = 0; //TODO: make custom play button image
             //give each this.buttons[i] the correction click action
             switch (i) {
                 case 0:
@@ -172,12 +178,6 @@ class Menu extends Phaser.Scene {
                         //this.sound.play('sfx_select'); 
                         if (game.settings.gameTimer > 15000)
                             game.settings.gameTimer -= 5000;
-                    };
-                    break;
-                case 6:
-                    this.buttons[i].click = function () {
-                        //this.sound.play('sfx_select'); 
-                        //this.scene.start('playScene');
                     };
                     break;
                 default:
