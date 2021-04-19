@@ -17,14 +17,10 @@ class Play extends Phaser.Scene {
             frameWidth: 61,
             frameHeight: 32,
         });
-        this.load.spritesheet('explosion', './assets/explosion.png', {
-            frameWidth: 64,
-            frameHeight: 32,
-            startFrame: 0,
-            endFrame: 9
-        });
+        //load atlases
+        this.load.atlas('explode', './assets/cop/explode-sheet.png', 
+            'assets/cop/explode.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
 
-        //load atlas
         this.load.atlas('fat', 'assets/cop/fat-spritesheet.png',
             'assets/cop/fat-sprites.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
     }
@@ -63,7 +59,7 @@ class Play extends Phaser.Scene {
             let ySpacing = (game.settings.spawnAmount > 5) ? 5 : game.settings.spawnAmount;
             this.guards.push({
                 sprite: new Guard(this, Phaser.Math.Between(0, game.config.width),
-                    (borderUISize * ((2 * ySpacing) - (i))) + (borderPadding * (2 * (2 - i))),
+                    (borderUISize * ((1.5 * ySpacing) - (i))) + (borderPadding * (5 * (2 - i))),
                     'cop', 0, 10 * (i + 1)).setOrigin(0, 0),
                 fat: []
             });
@@ -144,7 +140,6 @@ class Play extends Phaser.Scene {
                 top: 5,
                 bottom: 5,
             },
-            fixedWidth: 50
         }
         this.scores = {
             pointAmount:[],
@@ -172,12 +167,10 @@ class Play extends Phaser.Scene {
         //animation config
         this.anims.create({
             key: 'explode',
-            frames: this.anims.generateFrameNumbers('explosion', {
-                start: 0,
-                end: 9,
-                first: 0
-            }),
-            frameRate: 30
+            frames: ['explode1','explode2','explode3','explode4','explode5'],
+
+            frameRate: 10,
+
         });
 
         //initialize timer
@@ -274,12 +267,12 @@ class Play extends Phaser.Scene {
         //hide previous fat image
         guard.fat[guard.sprite.bloated - 1].alpha = 0;
         guard.sprite.bloated--;
+        guard.sprite.moveSpeed += 0.25;
         //display skinnier image
         if (guard.sprite.bloated != 0)
             guard.fat[guard.sprite.bloated - 1].alpha = 1;
         else
             guard.fat[0].alpha = 0;
-        console.log(guard.sprite.bloated);
     }
 
     //updates the gaurds image to be fatter or explode; awards individual points
@@ -298,6 +291,8 @@ class Play extends Phaser.Scene {
             //assign points based on the size of the guard and the depth (saved in guard.sprite.points)
             pointsIncrement = guard.sprite.bloated * 10 + guard.sprite.points;
             timeIncrement = guard.sprite.points;
+            guard.sprite.moveSpeed -= 0.25;
+            this.playRandomSound();
         }
         else { //explode guard
             //temporarily hide guard
@@ -306,14 +301,18 @@ class Play extends Phaser.Scene {
             guard.fat[guard.fat.length - 1].alpha = 0;
             guard.sprite.bloated = 0;
             //create explosion sprite at guard's position
-            let boom = this.add.sprite(guard.sprite.x, guard.sprite.y, 'explosion').setOrigin(0, 0);
+            let boom = this.add.sprite(guard.sprite.x, guard.sprite.y, 'explode').setOrigin(0, 0);
             boom.anims.play('explode');             // play explode animation
             boom.on('animationcomplete', () => {    // callback after anim completes
                 guard.sprite.reset();                         // reset guard position
+                guard.sprite.moveSpeed = game.settings.guardSpeed;
                 guard.sprite.alpha = 1;                       // make guard visible again
                 boom.destroy();                       // remove explosion sprite
             });
-            this.sound.play('sfx_explosion');
+            
+            //play death sound effect
+            this.sound.play("sfx_death");
+
             //assign points based on the depth (saved in guard.sprite.points)
             pointsIncrement = guard.sprite.points * 3;
             timeIncrement = guard.sprite.points * 2;
@@ -324,6 +323,25 @@ class Play extends Phaser.Scene {
         this.scores.scoreBox[doughnut.player].text = this.scores.pointAmount[doughnut.player];
         game.settings.gameTimer += (timeIncrement * 50) / game.settings.players;
         this.clock.delay += (timeIncrement * 50) / game.settings.players;
+    }
+
+    playRandomSound() {
+        switch(Math.floor(Math.random() * 4)) {
+            case 0:
+                this.sound.play('sfx_eating1');
+                break;
+            case 1:
+                this.sound.play('sfx_eating2');
+                break;
+            case 2:
+                this.sound.play('sfx_eating3');
+                break;
+            case 3:
+                this.sound.play('sfx_eating4');
+                break;
+            default:
+                console.log('Error: Invalid Sound');
+        }
     }
 
     updateTime(guardArray) {

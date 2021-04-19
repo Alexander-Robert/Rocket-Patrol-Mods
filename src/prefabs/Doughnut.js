@@ -7,7 +7,7 @@ class Doughnut extends Phaser.GameObjects.Sprite {
         scene.add.existing(this);
         this.isFiring = false; //track doughnut firing status
         this.moveSpeed = 3; //pixels per frame
-        this.sfxRocket = scene.sound.add('sfx_rocket'); // add rocket sfx
+        this.sfxRocket = scene.sound.add('sfx_fire'); // add rocket sfx
         this.player = player //track which player this instance is
         this.LEFT = LEFT;
         this.RIGHT = RIGHT;
@@ -15,13 +15,14 @@ class Doughnut extends Phaser.GameObjects.Sprite {
     }
 
     update() {
+        this.spinSpeed = 3;
         // left/right movement
         if (this.LEFT.isDown && this.x >= borderUISize + this.width) {
             this.x -= this.moveSpeed;
-            this.angle -= this.moveSpeed * 3;
+            this.angle -= this.moveSpeed * this.spinSpeed;
         } else if (this.RIGHT.isDown && this.x <= game.config.width - borderUISize - this.width) {
             this.x += this.moveSpeed;
-            this.angle += this.moveSpeed * 3;
+            this.angle += this.moveSpeed * this.spinSpeed;
         }
         //fire button
         if (Phaser.Input.Keyboard.JustDown(this.FIRE) && !this.isFiring) {
@@ -30,10 +31,12 @@ class Doughnut extends Phaser.GameObjects.Sprite {
         }
         // if fired, move the doughnut up
         if (this.isFiring && this.y >= borderUISize + this.height) {
+            this.spinSpeed = 30;
             this.y -= this.moveSpeed;
         }
 
         if (this.y <= borderUISize + this.height) {
+            this.spinSpeed = 3;
             this.reset();
         }
     }

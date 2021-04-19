@@ -5,9 +5,14 @@ class Menu extends Phaser.Scene {
 
     preload() {
         // load audio
-        this.load.audio('sfx_select', './assets/blip_select12.wav');
-        this.load.audio('sfx_explosion', './assets/explosion38.wav');
-        this.load.audio('sfx_rocket', './assets/rocket_shot.wav');
+        this.load.audio('sfx_select', './assets/sounds/click.wav');
+        this.load.audio('sfx_fire', './assets/sounds/fire.wav');
+        this.load.audio('sfx_death', './assets/sounds/death.wav');
+        this.load.audio('sfx_eating1', './assets/sounds/omnomnom.wav');
+        this.load.audio('sfx_eating2', './assets/sounds/OMNnomnom.wav');
+        this.load.audio('sfx_eating3', './assets/sounds/nom.wav');
+        this.load.audio('sfx_eating4', './assets/sounds/aummm.wav');
+        
 
         //load button sprite sheet
         this.load.spritesheet('button', './assets/button-spritesheet.png',
@@ -46,7 +51,7 @@ class Menu extends Phaser.Scene {
             'Use ←→ arrows to move & ↑ to fire', menuConfig).setOrigin(0.5);
         menuConfig.backgroundColor = '#00FF00';
         this.add.text(game.config.width / 2, game.config.height / 2 + borderUISize + borderPadding,
-            'Press ← for Novice or → for Expert', menuConfig).setOrigin(0.5);
+            '← for easy, ↑ for medium or → for hard', menuConfig).setOrigin(0.5);
         this.add.text(game.config.width / 2, game.config.height / 2 + borderUISize * 5,
             'HIGHSCORE: ' + game.highScore, menuConfig).setOrigin(0.5);
 
@@ -98,7 +103,7 @@ class Menu extends Phaser.Scene {
         }
         if (Phaser.Input.Keyboard.JustDown(keyUP)) {
             // medium mode
-            game.settings.spawnAmount = 3;
+            game.settings.spawnAmount = 4;
             game.settings.guardSpeed = 4;
             game.settings.gameTimer = 45000;
             this.sound.play('sfx_select');
@@ -108,7 +113,7 @@ class Menu extends Phaser.Scene {
             // hard mode
             game.settings.spawnAmount = 5;
             game.settings.guardSpeed = 5;
-            game.settings.gameTimer = 5000; //30000
+            game.settings.gameTimer = 30000;
             this.sound.play('sfx_select');
             this.scene.start('playScene');
         }
