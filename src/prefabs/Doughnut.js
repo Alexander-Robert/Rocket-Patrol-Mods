@@ -1,6 +1,6 @@
 // doughnut (player) prefab
 class Doughnut extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, texture, LEFT, RIGHT, FIRE, frame) {
+    constructor(scene, x, y, texture, LEFT, RIGHT, FIRE, player, frame) {
         super(scene, x, y, texture, frame);
 
         //add Object to existing scene
@@ -8,6 +8,7 @@ class Doughnut extends Phaser.GameObjects.Sprite {
         this.isFiring = false; //track doughnut firing status
         this.moveSpeed = 3; //pixels per frame
         this.sfxRocket = scene.sound.add('sfx_rocket'); // add rocket sfx
+        this.player = player //track which player this instance is
         this.LEFT = LEFT;
         this.RIGHT = RIGHT;
         this.FIRE = FIRE;

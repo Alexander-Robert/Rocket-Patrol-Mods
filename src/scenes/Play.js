@@ -136,7 +136,25 @@ class Play extends Phaser.Scene {
             }
         ];
 
-        //add doughnut(s) (players[1-4])
+        //display score
+        let scoreConfig = {
+            fontFamily: 'Courier',
+            fontSize: '28px',
+            backgroundColor: '#F3B141',
+            color: '#843605',
+            align: 'right',
+            padding: {
+                top: 5,
+                bottom: 5,
+            },
+            fixedWidth: 50
+        }
+        this.scores = {
+            pointAmount:[],
+            scoreBox: []
+        };
+
+        //add doughnut(s) (players[1-4]) and add individual scores
         this.doughnuts = new Array;
         for (let i = 0; i < game.settings.players; i++) {
             this.doughnuts.push(new Doughnut(this, game.config.width / (1.25 + i),
@@ -144,7 +162,14 @@ class Play extends Phaser.Scene {
                 this.playerPropertyArray[i].image,
                 this.playerPropertyArray[i].left,
                 this.playerPropertyArray[i].right,
-                this.playerPropertyArray[i].fire));
+                this.playerPropertyArray[i].fire,
+                i)); //i is the player ID number
+            //initialize scores
+            this.scores.pointAmount.push(0);
+            this.scores.scoreBox.push(this.add.text((borderUISize + borderPadding) + (i * 100), 
+            borderUISize + borderPadding * 2, this.scores.pointAmount[i], scoreConfig));
+            this.add.image((borderUISize + borderPadding) + (i * 100) + 70,
+            borderUISize + borderPadding * 2 + 18, this.playerPropertyArray[i].image);
         }
 
         //animation config
@@ -163,25 +188,6 @@ class Play extends Phaser.Scene {
 
         this.toggleSpeed = true; //used to speed up guards past 30 seconds left
 
-        //initialize scores
-        this.p1Score = 0;
-
-        //display score
-        let scoreConfig = {
-            fontFamily: 'Courier',
-            fontSize: '28px',
-            backgroundColor: '#F3B141',
-            color: '#843605',
-            align: 'right',
-            padding: {
-                top: 5,
-                bottom: 5,
-            },
-            fixedWidth: 100
-        }
-        this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding * 2,
-            this.p1Score, scoreConfig);
-
         //GAME OVER flag
         this.gameOver = false;
 
@@ -195,10 +201,16 @@ class Play extends Phaser.Scene {
             this.add.text(game.config.width / 2, game.config.height / 2 + 128, 'Press ↓ to Restart or ← for Menu',
                 scoreConfig).setOrigin(0.5);
             this.clockRight.text = 'Time: ' + 0;
-            if (this.p1Score > game.highScore)
-                game.highScore = this.p1Score;
+            let winnerString = "";
+            for(let i = 0; i < this.scores.pointAmount.length; i++){
+                if (this.scores.pointAmount[i] > game.highScore){
+                    game.highScore = this.scores.pointAmount[i];
+                    winnerString = " player " + (i+1) + " wins!";
+                }
+            }
             this.add.text(game.config.width / 2, game.config.height / 2 + 64,
-                'HIGHSCORE: ' + game.highScore, scoreConfig).setOrigin(0.5);
+                'HIGHSCORE: ' + game.highScore + winnerString,
+                scoreConfig).setOrigin(0.5);
             this.gameOver = true;
         }, null, this);
 
@@ -240,7 +252,7 @@ class Play extends Phaser.Scene {
             for (let guard of this.guards) {
                 if (this.checkCollision(doughnut, guard.sprite)) {
                     doughnut.reset();
-                    this.getFatter(guard);
+                    this.getFatter(doughnut, guard);
                 }
             }
         }
@@ -273,7 +285,7 @@ class Play extends Phaser.Scene {
     }
 
     //updates the gaurds image to be fatter or explode; awards individual points
-    getFatter(guard) {
+    getFatter(doughnut, guard) {
         let pointsIncrement = 0;
         let timeIncrement = 0;
         //check if guard should get fat or explode
@@ -309,8 +321,9 @@ class Play extends Phaser.Scene {
             timeIncrement = guard.sprite.points * 2;
         }
         //add to individual score and timer
-        this.p1Score += pointsIncrement;
-        this.scoreLeft.text = this.p1Score;
+        console.log(doughnut.player);
+        this.scores.pointAmount[doughnut.player] += pointsIncrement;
+        this.scores.scoreBox[doughnut.player].text = this.scores.pointAmount[doughnut.player];
         game.settings.gameTimer += (timeIncrement * 50) / game.settings.players;
         this.clock.delay += (timeIncrement * 50) / game.settings.players;
     }
