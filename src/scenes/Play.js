@@ -18,7 +18,7 @@ class Play extends Phaser.Scene {
             frameHeight: 32,
         });
         //load atlases
-        this.load.atlas('explode', './assets/cop/explode-sheet.png', 
+        this.load.atlas('explosion', './assets/cop/explode-sheet.png', 
             'assets/cop/explode.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
 
         this.load.atlas('fat', 'assets/cop/fat-spritesheet.png',
@@ -167,10 +167,13 @@ class Play extends Phaser.Scene {
         //animation config
         this.anims.create({
             key: 'explode',
-            frames: ['explode1','explode2','explode3','explode4','explode5'],
-
-            frameRate: 10,
-
+            frames: this.anims.generateFrameNumbers('explosion', {
+                start: 0,
+                end: 4,
+                first: 0
+            }),
+            duration: 10,
+            frameRate: 10
         });
 
         //initialize timer
@@ -301,7 +304,7 @@ class Play extends Phaser.Scene {
             guard.fat[guard.fat.length - 1].alpha = 0;
             guard.sprite.bloated = 0;
             //create explosion sprite at guard's position
-            let boom = this.add.sprite(guard.sprite.x, guard.sprite.y, 'explode').setOrigin(0, 0);
+            let boom = this.add.sprite(guard.sprite.x, guard.sprite.y, 'explosion').setOrigin(0, 0);
             boom.anims.play('explode');             // play explode animation
             boom.on('animationcomplete', () => {    // callback after anim completes
                 guard.sprite.reset();                         // reset guard position
