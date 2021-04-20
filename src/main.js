@@ -22,6 +22,13 @@ let keyDOWN,
     keyI, keyJ, keyL;
 
 
+/*
+I recived help in debugging from Anya Osborne (TA), Colin O'Rourke, and Ardent:
+    Anya Osborne: Helped debug issues with switching the explosion animation from a spritesheet to an atlas
+    Colin O'Rourke: Helped debug displaing high score, gave me a better understanding of how bindings
+should be scoped given their functionality and needed accessibility
+    Ardent: Helped debug giving/recieving additional parameters in the rocket class and animating the spaceship objects
+*/
 //--------------------------------------------------------------------------------------------
 /*
 POINTS BREAKDOWN:
